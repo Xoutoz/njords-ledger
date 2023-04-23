@@ -1,0 +1,27 @@
+[
+    {
+      "name": "date",
+      "type": "DATE",
+      "description": "Expense date"
+    },
+    {
+        "name": "description",
+        "type": "STRING",
+        "description": "Expense small description"
+    },
+    {
+      "name": "price",
+      "type": "FLOAT64",
+      "description": "Expense value"
+    },
+    {
+      "name": "category",
+      "type": "STRING",
+      "description": "Expense category"
+    },
+    {
+      "name": "owner",
+      "type": "STRING",
+      "description": "Owner of the expense"
+    }
+]
