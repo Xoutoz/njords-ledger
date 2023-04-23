@@ -53,12 +53,8 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform plan -input=false
-      env:
-        TF_VAR_tf_credentials: ${{ secrets.GCP_CREDENTIALS }}
 
     # On push to "main", build or change infrastructure according to Terraform configuration files
     - name: Terraform Apply
       if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
       run: terraform apply -auto-approve -input=false
-      env:
-        TF_VAR_tf_credentials: ${{ secrets.GCP_CREDENTIALS }}

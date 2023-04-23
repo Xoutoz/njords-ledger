@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "google" {
-  credentials = file(var.tf_credentials)
+  # credentials = file(var.tf_credentials)
   project     = "xoutoz-accounting"
   region      = "europe-west1"
 }
