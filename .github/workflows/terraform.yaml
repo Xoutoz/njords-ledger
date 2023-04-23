@@ -22,6 +22,7 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
+      working-directory: ./terraform
 
     # Install the latest version of Terraform CLI
     - name: Setup Terraform
