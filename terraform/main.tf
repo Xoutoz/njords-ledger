@@ -1,6 +1,6 @@
 locals {
-    bq_schema = "${path.root}/files/expenses-bq-table-schema.json"
-    pubsub_schema = "${path.root}/files/expenses-pubsub-topic-schema.json"
+  bq_schema = "${path.root}/files/expenses-bq-table-schema.json"
+  pubsub_schema = "${path.root}/files/expenses-pubsub-topic-schema.json"
 }
 
 ## GCP PROJECT DATA
