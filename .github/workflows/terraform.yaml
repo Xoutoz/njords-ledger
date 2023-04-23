@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  id-token: 'write'
 
 jobs:
   terraform:
@@ -20,6 +21,16 @@ jobs:
         working-directory: ./terraform
 
     steps:
+    # Authenticate to GCP
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    # Setup GCP SDK
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
