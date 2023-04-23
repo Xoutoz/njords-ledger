@@ -1,4 +1,4 @@
-variable "tf_credentials" {
-    type = string
-    sensitive = true
-}
+# variable "tf_credentials" {
+#     type = string
+#     sensitive = true
+# }
