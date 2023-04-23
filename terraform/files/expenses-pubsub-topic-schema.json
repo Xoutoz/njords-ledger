@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "Avro",
+  "fields": [
+    {
+      "name": "date",
+      "type": "string"
+    },
+    {
+      "name": "description",
+      "type": "string"
+    },
+    {
+      "name": "price",
+      "type": "float"
+    },
+    {
+      "name": "category",
+      "type": "string"
+    },
+    {
+      "name": "owner",
+      "type": "string"
+    }
+  ]
+}
