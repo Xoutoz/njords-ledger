@@ -25,16 +25,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    # Setup GCP SDK
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+
     # Authenticate to GCP
     - id: 'auth'
       uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
         create_credentials_file: false
-
-    # Setup GCP SDK
-    - name: 'Set up Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v1'
 
     # Install the latest version of Terraform CLI
     - name: Setup Terraform
