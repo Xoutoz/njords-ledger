@@ -2,7 +2,7 @@ name: 'Terraform'
 
 on:
   push:
-    branches: [ "main", "cicd-fix" ]
+    branches: [ "main" ]
   pull_request:
 
 permissions:
@@ -27,19 +27,12 @@ jobs:
 
     # Authenticate to GCP
     - id: 'auth'
-      name: 'Authenticate to Google Cloud'
+      name: 'Authenticate to GCP'
       uses: 'google-github-actions/auth@v1'
       with:
         workload_identity_provider: 'projects/681258612951/locations/global/workloadIdentityPools/pool/providers/github'
         service_account: 'terraform-sa@xoutoz-accounting.iam.gserviceaccount.com'
         create_credentials_file: true
-    
-    # # Setup GCP SDK
-    # - name: 'Set up Cloud SDK'
-    #   uses: 'google-github-actions/setup-gcloud@v1'
-    
-    # - name: 'Use gcloud CLI'
-    #   run: 'gcloud info'
 
     # Install the latest version of Terraform CLI
     - name: Setup Terraform
