@@ -2,7 +2,7 @@ name: 'Terraform'
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "cicd-fix" ]
   pull_request:
 
 permissions:
@@ -25,6 +25,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Print
+      run: echo ${{ github.ref }}, ${{ github.event_name }}
+
     # Authenticate to GCP
     - id: 'auth'
       name: 'Authenticate to Google Cloud'
@@ -33,7 +36,6 @@ jobs:
         workload_identity_provider: 'projects/681258612951/locations/global/workloadIdentityPools/pool/providers/github'
         service_account: 'terraform-sa@xoutoz-accounting.iam.gserviceaccount.com'
         create_credentials_file: true
-        activate_credentials_file: true
     
         # Setup GCP SDK
     - name: 'Set up Cloud SDK'
@@ -56,5 +58,5 @@ jobs:
 
     # On push to "main", build or change infrastructure according to Terraform configuration files
     - name: Terraform Apply
-      if: github.event.pull_request.merged == true
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve -input=false
