@@ -2,7 +2,7 @@ name: 'Terraform'
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "cicd-fix" ]
   pull_request:
 
 permissions:
@@ -24,6 +24,9 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
+
+    - name: Print
+      run: echo ${{ github.ref }} | ${{ github }}
 
     # Authenticate to GCP
     - id: 'auth'
