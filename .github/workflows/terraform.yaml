@@ -36,7 +36,6 @@ jobs:
         workload_identity_provider: 'projects/681258612951/locations/global/workloadIdentityPools/pool/providers/github'
         service_account: 'terraform-sa@xoutoz-accounting.iam.gserviceaccount.com'
         create_credentials_file: true
-        activate_credentials_file: true
     
         # Setup GCP SDK
     - name: 'Set up Cloud SDK'
@@ -59,5 +58,5 @@ jobs:
 
     # On push to "main", build or change infrastructure according to Terraform configuration files
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve -input=false
