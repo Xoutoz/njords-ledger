@@ -16,7 +16,6 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 
-
 # Ignore developement caches and configs
 .vscode
 .venv
