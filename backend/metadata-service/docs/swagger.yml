@@ -1,0 +1,232 @@
+openapi: '3.0.2'
+info:
+  title: Prometheus - Metadata service
+  description: This service helps users improve their financial health by storing information about their expenses and subscriptions. Users can categorize their expenses, track their spending habits, and set budgets. This service can help users save money and achieve their financial goals.
+  version: '1.0'
+servers:
+  - url: http://localhost:5000/users
+
+tags:
+  - name: category
+  - name: subscriptions
+
+paths:
+  /{userId}/categories:
+    get:
+      tags:
+        - category
+      description: "List all user defined categories."
+      parameters:
+        - name: userId
+          in: path
+          description: User which consults
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: Groceries 'Car' category was submitted successfully.
+        '404':
+          description: User not found
+
+    post:
+      tags:
+        - category
+      description: "Create a new category"
+      parameters:
+        - name: userId
+          in: path
+          description: User which consults
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Category 'Groceries' was submitted successfully."
+        '400':
+          description: Given category is not valid
+        '404':
+          description: User not found
+        '409':
+          description: Given category already exists
+
+
+  /{userId}/categories/{category}:
+    put:
+      tags:
+        - category
+      description: "Update a specified categories."
+      parameters:
+        - name: userId
+          in: path
+          description: User which consults
+          required: true
+          schema:
+            type: string
+        - name: category
+          in: path
+          description: The category that needs to be updated
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Category 'Groceries' was changed successfully."
+        '400':
+          description: Given category is not valid
+        '404':
+          description: User not found | Category not found
+        '409':
+          description: Given category already exists
+
+    delete:
+      tags:
+        - category
+      parameters:
+        - name: category
+          in: path
+          description: The category that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Category 'Groceries' was removed successfully.
+        '400':
+          description: Given category is not valid
+        '404':
+          description: User not found | Category not found
+
+
+  /{userId}/subscriptions:
+    get:
+      tags:
+        - subscriptions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscription'
+        '404':
+          description: User not found
+    post:
+      tags:
+        - subscriptions
+      requestBody:
+            description: Create a new pet in the store
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Subscription'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Submitted subscription was registered successfully."
+        '400':
+          description: Selected subscription is not valid
+        '404':
+          description: User not found | Given category does not exist
+        '409':
+          description: Given subscription already exists
+    put:
+      tags:
+        - subscriptions
+      description: To update a subscription, you must provide the subscription ID and at least one parameter. The parameters you provide will determine the changes that are made to the subscription. You can provide any combination of parameters to update the subscription. If you do not provide a parameter, the current value of that parameter will not be changed.
+      requestBody:
+            description: Create a new pet in the store
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Subscription'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Provided subscription was updated successfully."
+        '400':
+          description: Selected subscription is not valid
+        '404':
+          description: User not found | Given category does not exist | Given subscription does not exist
+
+  /{userId}/subscriptions/{subscriptionId}:
+    delete:
+      tags:
+        - subscriptions
+      parameters:
+        - name: subscriptionId
+          in: path
+          description: The subscription ID that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Provided subscription was removed successfully."
+        '400':
+          description: Selected subscription is not valid
+        '404':
+          description: User not found | Given subscription does not exist
+
+
+components:
+  schemas:
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "hCciRbKYiFS/t2oW5guupQ=="
+        category:
+          type: string
+          example: Entertainment
+        description:
+          type: string
+          example: Disney+
+        price:
+          type: number
+          format: double
+          example: 13.99
+        type:
+          type: string
+          example: monthly | yearly
+        renewalDate:
+          type: string
+          example: 25 | 01-25

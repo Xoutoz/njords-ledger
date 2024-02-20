@@ -52,6 +52,10 @@ resource "google_pubsub_subscription" "expenses_bq_subscription" {
     name  = "publish-expenses-subscription"
     topic = google_pubsub_topic.expenses_topic.name
 
+    expiration_policy {
+        ttl = ""
+    }
+
     bigquery_config {
         table = "${google_bigquery_table.expenses.project}.${google_bigquery_table.expenses.dataset_id}.${google_bigquery_table.expenses.table_id}"
         use_topic_schema = true
