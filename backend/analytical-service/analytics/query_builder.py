@@ -32,8 +32,8 @@ def generate_set_clause(input: list | dict) -> str:
             field = condition["field"]
             value = condition["value"]
 
-            # Convert the value to a string if it is not an int, float, or numeric string.
-            value = f'"{value}"' if not isinstance(value, (int, float)) or (isinstance(value, str) and not value.isnumeric()) else value
+            # Convert the value to a string if it is not an int, float, boolean, or numeric string.
+            value = f'"{value}"' if isinstance(value, str) and not value.isnumeric() else value
 
             # Write the field=value pair to the set_clause builder.
             set_clause_builder.write(f'{field} = {value}')
@@ -47,8 +47,8 @@ def generate_set_clause(input: list | dict) -> str:
         field = input["field"]
         value = input["value"]
 
-        # Convert the value to a string if it is not an int, float, or numeric string.
-        value = f'"{value}"' if not isinstance(value, (int, float)) or (isinstance(value, str) and not value.isnumeric()) else value
+        # Convert the value to a string if it is not an int, float, boolean, or numeric string.
+        value = f'"{value}"' if isinstance(value, str) and not value.isnumeric() else value
 
         # Write the field=value pair to the set_clause builder.
         set_clause_builder.write(f'{field} = {value}')
@@ -92,19 +92,23 @@ def generate_where_clause(input: list | dict) -> str:
             if isinstance(value, list) and operator == "IN":
                 sql_array = ""
                 for element in value:
-                    sql_array += element if isinstance(element, (int, float)) or (isinstance(element, str) and element.isnumeric()) else f'"{element}"{", " if element != value[-1] else ""}'
+                    sql_array += f'"{element}"' if isinstance(element, str) and not element.isnumeric() else element
+                    if element != value[-1]:
+                        sql_array += ", "
                 value = f"({sql_array})"
 
             # If the value is a list and the operator is BETWEEN, generate a SQL BETWEEN clause.
             elif isinstance(value, list) and operator == "BETWEEN":
                 sql_between = ""
                 for index, element in enumerate(value):
-                    sql_between += element if isinstance(element, (int, float)) or (isinstance(element, str) and element.isnumeric()) else f'"{element}"{" AND " if index == 0 else ""}'
+                    sql_between += f'"{element}"' if isinstance(element, str) and not element.isnumeric() else element
+                    if index == 0:
+                        sql_between += " AND "
                 value = sql_between
 
             else:
-                # Convert the value to a string if it is not an int, float, or numeric string.
-                value = f'"{value}"' if not isinstance(value, (int, float)) or (isinstance(value, str) and not value.isnumeric()) else value
+                # Convert the value to a string if it is not an int, float, boolean, or numeric string.
+                value = f'"{value}"' if isinstance(value, str) and not value.isnumeric() else value
 
             # Add the field=value pair to the where_clause builder. If the condition is not the last element in the list, add a comma and space.
             where_clause_builder.write(f'{field} {operator} {value}{" AND " if condition != input[-1] else ""}')
@@ -119,19 +123,23 @@ def generate_where_clause(input: list | dict) -> str:
         if isinstance(value, list) and operator == "IN":
             sql_array = ""
             for element in value:
-                sql_array += element if isinstance(element, (int, float)) or (isinstance(element, str) and element.isnumeric()) else f'"{element}"{", " if element != value[-1] else ""}'
+                sql_array += f'"{element}"' if isinstance(element, str) and not element.isnumeric() else element
+                if element != value[-1]:
+                    sql_array += ", "
             value = f"({sql_array})"
 
         # If the value is a list and the operator is BETWEEN, generate a SQL BETWEEN clause.
         elif isinstance(value, list) and operator == "BETWEEN":
             sql_between = ""
             for index, element in enumerate(value):
-                sql_between += element if isinstance(element, (int, float)) or (isinstance(element, str) and element.isnumeric()) else f'"{element}"{" AND " if index == 0 else ""}'
+                sql_between += f'"{element}"' if isinstance(element, str) and not element.isnumeric() else element
+                if index == 0:
+                    sql_between += " AND "
             value = sql_between
 
         else:
-            # Convert the value to a string if it is not an int, float, or numeric string.
-            value = f'"{value}"' if not isinstance(value, (int, float)) or (isinstance(value, str) and not value.isnumeric()) else value
+            # Convert the value to a string if it is not an int, float, boolean, or numeric string.
+            value = f'"{value}"' if isinstance(value, str) and not value.isnumeric() else value
         
         # Add the field=value pair to the where_clause builder. If the condition is not the last element in the list, add a comma and space.
         where_clause_builder.write(f'{field} {operator} {value}')
@@ -223,7 +231,7 @@ def build_sql_query(dataset_id: str, table_id: str, statement: str, **kwargs) ->
     Args:
         dataset_id: The ID of the BigQuery dataset containing the table.
         table_id: The ID of the BigQuery table to query.
-        statement: The type of SQL statement to perform, such as 'SELECT', 'UPDATE', or 'DELETE'.
+        statement: The type of SQL statement to perform, such as 'SELECT', 'INSERT', 'UPDATE', or 'DELETE'.
         **kwargs: A dictionary of keyword arguments, each of which is a string
             representing the name of a clause to add to the query. The value of each
             keyword argument is a list of arguments specific to the clause.
@@ -244,6 +252,15 @@ def build_sql_query(dataset_id: str, table_id: str, statement: str, **kwargs) ->
             fields = kwargs["fields"]
             fields_str = ", ".join(field for field in fields) if isinstance(fields, list) else fields
             query_builder.write(f'{statement} {fields_str} FROM {target}')
+        case "INSERT":
+            fields = kwargs["fields"]
+            values = kwargs["values"]
+            fields_str = ", ".join(field for field in fields) if isinstance(fields, list) else fields
+            values_str = ", ".join(str(value) if not isinstance(value, str) else \
+                                   # Apply quote marks to values that are not numeric or boolean
+                                   f'"{value}"' if isinstance(value, str) and not value.isnumeric() else value \
+                                    for value in values) if isinstance(values, list) else values
+            query_builder.write(f'{statement} INTO {target} ({fields_str}) VALUES ({values_str})')
         case "UPDATE":
             query_builder.write(f'{statement} {target}')
         case "DELETE":
@@ -276,4 +293,17 @@ def build_sql_query(dataset_id: str, table_id: str, statement: str, **kwargs) ->
                     query_builder.write(generate_group_by_clause(arg))
 
     # Get the SQL query string from the StringBuilder.
+    query_builder.write(";")
     return query_builder.getvalue()
+
+
+def build_transactional_query(queries: list) -> str:
+    queries_str = "\n".join(queries)
+    return f"""
+BEGIN
+BEGIN TRANSACTION;
+
+{queries_str}
+
+COMMIT TRANSACTION;
+END;"""
