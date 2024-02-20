@@ -28,6 +28,3 @@ backend/*/.devcontainer/*.env
 
 # Ignore unit testing track files
 **/.coverage
-
-# Ignore GCP service account
-app-engine-sa.json
