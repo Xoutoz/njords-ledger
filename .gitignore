@@ -22,5 +22,12 @@ override.tf.json
 __pycache__
 .pytest_cache
 
+
+# Ignore devcontainers
+**/.devcontainer/*
+
+# Ignore unit testing track files
+**/.coverage
+
 # Ignore GCP service account
 app-engine-sa.json
