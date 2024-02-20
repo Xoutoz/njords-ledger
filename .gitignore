@@ -24,7 +24,7 @@ __pycache__
 
 
 # Ignore devcontainers
-**/.devcontainer/*
+**/.devcontainer/
 
 # Ignore unit testing track files
 **/.coverage
