@@ -18,6 +18,7 @@ override.tf.json
 
 # Ignore developement caches and configs
 .vscode
+.env
 .venv
 __pycache__
 .pytest_cache
